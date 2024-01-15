@@ -12,8 +12,11 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+Console.WriteLine("---> Using SQL Server DB");
 builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseInMemoryDatabase("InMem"));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("PlatformsConn")));
+
 
 builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
 
@@ -27,7 +30,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-PrepDb.PrepPopulation(app);
+PrepDb.PrepPopulation(app, app.Environment.IsProduction());
 
 app.UseAuthorization();
 
